@@ -89,7 +89,7 @@
         <!-- Target Hours (only visible in Clock-Out Mode) -->
         <div id="targetHoursContainer" class="mb-4">
             <label for="targetHours" class="form-label">Target Hours:</label>
-            <input type="number" id="targetHours" class="form-control" value="32" min="0" max="100" step="0.5">
+            <input type="number" id="targetHours" class="form-control" value="30" min="0" max="100" step="0.5">
         </div>
         
         <!-- Days of the week -->
@@ -206,10 +206,11 @@
         </div>
         
         <!-- Results -->
-        <div class="result" id="result">Enter your times to see results</div>
+        <div class="result" id="result">Click calculate to see results</div>
         
         <!-- Buttons -->
         <div class="d-grid gap-2 mt-4">
+            <button id="calculateButton" class="btn btn-primary mb-2">Calculate</button>
             <button id="resetButton" class="btn btn-danger">Reset All</button>
         </div>
     </div>
@@ -223,6 +224,7 @@
             const targetHoursInput = document.getElementById('targetHours');
             const lastClockOut = document.querySelector('.last-clock-out');
             const resetButton = document.getElementById('resetButton');
+            const calculateButton = document.getElementById('calculateButton');
             const resultDisplay = document.getElementById('result');
             const dayCheckboxes = document.querySelectorAll('.day-checkbox');
             const timeInputs = document.querySelectorAll('.time-input');
@@ -241,7 +243,7 @@
                     targetHoursContainer.classList.add('hidden');
                     lastClockOut.disabled = false;
                 }
-                calculate();
+                resultDisplay.textContent = 'Click calculate to see results';
             }
             
             // Day checkbox event listeners
@@ -260,18 +262,11 @@
                             input.value = '';
                         });
                     }
-                    
-                    calculate();
                 });
             });
             
-            // Time input event listeners
-            timeInputs.forEach(input => {
-                input.addEventListener('change', calculate);
-            });
-            
-            // Target hours event listener
-            targetHoursInput.addEventListener('change', calculate);
+            // Calculate button event listener
+            calculateButton.addEventListener('click', calculate);
             
             // Reset button event listener
             resetButton.addEventListener('click', function() {
@@ -288,10 +283,10 @@
                     div.style.opacity = '1';
                 });
                 
-                targetHoursInput.value = '32';
+                targetHoursInput.value = '30';
                 clockOutMode.checked = true;
                 updateMode();
-                resultDisplay.textContent = 'Enter your times to see results';
+                resultDisplay.textContent = 'Click calculate to see results';
             });
             
             // Initialize the UI
@@ -306,7 +301,7 @@
                 });
                 
                 if (!hasEntries) {
-                    resultDisplay.textContent = 'Enter your times to see results';
+                    resultDisplay.textContent = 'Enter your times before calculating';
                     return;
                 }
                 
@@ -356,7 +351,8 @@
                     const remainingMinutes = targetMinutes - totalMinutesWorked;
                     
                     if (remainingMinutes <= 0) {
-                        resultDisplay.textContent = `Already worked ${minutesToHours(totalMinutesWorked)} hours`;
+                        const hoursAndMinutes = formatHoursAndMinutes(totalMinutesWorked);
+                        resultDisplay.textContent = `Already worked ${hoursAndMinutes}`;
                     } else {
                         const lastClockInMinutes = timeToMinutes(lastDayClockIn);
                         let clockOutMinutes = lastClockInMinutes + remainingMinutes;
@@ -370,8 +366,9 @@
                         resultDisplay.textContent = `Clock out at: ${formatTime(clockOutTime)} to reach ${targetHoursInput.value} hours`;
                     }
                 } else {
-                    // Display total hours worked
-                    resultDisplay.textContent = `Total: ${minutesToHours(totalMinutesWorked)} hours worked`;
+                    // Display total hours worked in hours and minutes format
+                    const hoursAndMinutes = formatHoursAndMinutes(totalMinutesWorked);
+                    resultDisplay.textContent = `Total: ${hoursAndMinutes} worked`;
                 }
             }
             
@@ -387,8 +384,10 @@
                 return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
             }
             
-            function minutesToHours(minutes) {
-                return (minutes / 60).toFixed(2);
+            function formatHoursAndMinutes(totalMinutes) {
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
+                return `${hours} hours ${minutes} minutes`;
             }
             
             function formatTime(timeString) {

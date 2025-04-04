@@ -1,1 +1,404 @@
-<h1>Hello!</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Hours Calculator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-size: 18px;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-control, .form-select, .btn {
+            font-size: 18px;
+            height: auto;
+            padding: 12px;
+        }
+        .form-check-input {
+            width: 24px;
+            height: 24px;
+            margin-top: 0;
+        }
+        .form-label {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .result {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+        .day-row {
+            border-bottom: 1px solid #dee2e6;
+            padding: 15px 0;
+        }
+        .day-row:last-child {
+            border-bottom: none;
+        }
+        .hidden {
+            display: none;
+        }
+        .toggle-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .mode-toggle {
+            background-color: #f8f9fa;
+            border-radius: 30px;
+            padding: 5px;
+            display: inline-flex;
+            margin: 10px auto;
+        }
+        .mode-toggle label {
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .mode-toggle input:checked + label {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .mode-toggle input {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Work Hours Calculator</h1>
+        
+        <!-- Mode Toggle -->
+        <div class="toggle-container">
+            <div class="mode-toggle">
+                <input type="radio" name="mode" id="clockOutMode" checked>
+                <label for="clockOutMode">Calculate Clock-Out Time</label>
+                
+                <input type="radio" name="mode" id="totalHoursMode">
+                <label for="totalHoursMode">Calculate Total Hours</label>
+            </div>
+        </div>
+        
+        <!-- Target Hours (only visible in Clock-Out Mode) -->
+        <div id="targetHoursContainer" class="mb-4">
+            <label for="targetHours" class="form-label">Target Hours:</label>
+            <input type="number" id="targetHours" class="form-control" value="32" min="0" max="100" step="0.5">
+        </div>
+        
+        <!-- Days of the week -->
+        <div id="daysContainer">
+            <!-- Monday -->
+            <div class="day-row">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="form-check me-3">
+                        <input class="form-check-input day-checkbox" type="checkbox" id="mondayCheck" checked>
+                    </div>
+                    <label class="form-label mb-0 fs-5">Monday</label>
+                </div>
+                <div class="day-inputs">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="mondayIn" class="form-label">Clock In:</label>
+                            <input type="time" id="mondayIn" class="form-control time-input">
+                        </div>
+                        <div class="col-6">
+                            <label for="mondayOut" class="form-label">Clock Out:</label>
+                            <input type="time" id="mondayOut" class="form-control time-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tuesday -->
+            <div class="day-row">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="form-check me-3">
+                        <input class="form-check-input day-checkbox" type="checkbox" id="tuesdayCheck" checked>
+                    </div>
+                    <label class="form-label mb-0 fs-5">Tuesday</label>
+                </div>
+                <div class="day-inputs">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="tuesdayIn" class="form-label">Clock In:</label>
+                            <input type="time" id="tuesdayIn" class="form-control time-input">
+                        </div>
+                        <div class="col-6">
+                            <label for="tuesdayOut" class="form-label">Clock Out:</label>
+                            <input type="time" id="tuesdayOut" class="form-control time-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Wednesday -->
+            <div class="day-row">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="form-check me-3">
+                        <input class="form-check-input day-checkbox" type="checkbox" id="wednesdayCheck" checked>
+                    </div>
+                    <label class="form-label mb-0 fs-5">Wednesday</label>
+                </div>
+                <div class="day-inputs">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="wednesdayIn" class="form-label">Clock In:</label>
+                            <input type="time" id="wednesdayIn" class="form-control time-input">
+                        </div>
+                        <div class="col-6">
+                            <label for="wednesdayOut" class="form-label">Clock Out:</label>
+                            <input type="time" id="wednesdayOut" class="form-control time-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Thursday -->
+            <div class="day-row">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="form-check me-3">
+                        <input class="form-check-input day-checkbox" type="checkbox" id="thursdayCheck" checked>
+                    </div>
+                    <label class="form-label mb-0 fs-5">Thursday</label>
+                </div>
+                <div class="day-inputs">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="thursdayIn" class="form-label">Clock In:</label>
+                            <input type="time" id="thursdayIn" class="form-control time-input">
+                        </div>
+                        <div class="col-6">
+                            <label for="thursdayOut" class="form-label">Clock Out:</label>
+                            <input type="time" id="thursdayOut" class="form-control time-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Friday -->
+            <div class="day-row">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="form-check me-3">
+                        <input class="form-check-input day-checkbox" type="checkbox" id="fridayCheck" checked>
+                    </div>
+                    <label class="form-label mb-0 fs-5">Friday</label>
+                </div>
+                <div class="day-inputs">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="fridayIn" class="form-label">Clock In:</label>
+                            <input type="time" id="fridayIn" class="form-control time-input">
+                        </div>
+                        <div class="col-6">
+                            <label for="fridayOut" class="form-label">Clock Out:</label>
+                            <input type="time" id="fridayOut" class="form-control time-input last-clock-out">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results -->
+        <div class="result" id="result">Enter your times to see results</div>
+        
+        <!-- Buttons -->
+        <div class="d-grid gap-2 mt-4">
+            <button id="resetButton" class="btn btn-danger">Reset All</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all elements
+            const clockOutMode = document.getElementById('clockOutMode');
+            const totalHoursMode = document.getElementById('totalHoursMode');
+            const targetHoursContainer = document.getElementById('targetHoursContainer');
+            const targetHoursInput = document.getElementById('targetHours');
+            const lastClockOut = document.querySelector('.last-clock-out');
+            const resetButton = document.getElementById('resetButton');
+            const resultDisplay = document.getElementById('result');
+            const dayCheckboxes = document.querySelectorAll('.day-checkbox');
+            const timeInputs = document.querySelectorAll('.time-input');
+            
+            // Mode toggle event listeners
+            clockOutMode.addEventListener('change', updateMode);
+            totalHoursMode.addEventListener('change', updateMode);
+            
+            // Update visibility based on mode
+            function updateMode() {
+                if (clockOutMode.checked) {
+                    targetHoursContainer.classList.remove('hidden');
+                    lastClockOut.disabled = true;
+                    lastClockOut.value = '';
+                } else {
+                    targetHoursContainer.classList.add('hidden');
+                    lastClockOut.disabled = false;
+                }
+                calculate();
+            }
+            
+            // Day checkbox event listeners
+            dayCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const dayInputs = this.closest('.day-row').querySelector('.day-inputs');
+                    const inputs = dayInputs.querySelectorAll('input[type="time"]');
+                    
+                    if (this.checked) {
+                        dayInputs.style.opacity = '1';
+                        inputs.forEach(input => input.disabled = false);
+                    } else {
+                        dayInputs.style.opacity = '0.5';
+                        inputs.forEach(input => {
+                            input.disabled = true;
+                            input.value = '';
+                        });
+                    }
+                    
+                    calculate();
+                });
+            });
+            
+            // Time input event listeners
+            timeInputs.forEach(input => {
+                input.addEventListener('change', calculate);
+            });
+            
+            // Target hours event listener
+            targetHoursInput.addEventListener('change', calculate);
+            
+            // Reset button event listener
+            resetButton.addEventListener('click', function() {
+                dayCheckboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+                
+                timeInputs.forEach(input => {
+                    input.value = '';
+                    input.disabled = false;
+                });
+                
+                document.querySelectorAll('.day-inputs').forEach(div => {
+                    div.style.opacity = '1';
+                });
+                
+                targetHoursInput.value = '32';
+                clockOutMode.checked = true;
+                updateMode();
+                resultDisplay.textContent = 'Enter your times to see results';
+            });
+            
+            // Initialize the UI
+            updateMode();
+            
+            // Main calculation function
+            function calculate() {
+                // Clear the result if no times entered
+                let hasEntries = false;
+                timeInputs.forEach(input => {
+                    if (input.value && !input.disabled) hasEntries = true;
+                });
+                
+                if (!hasEntries) {
+                    resultDisplay.textContent = 'Enter your times to see results';
+                    return;
+                }
+                
+                // Get the days and calculate hours worked
+                const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+                let totalMinutesWorked = 0;
+                let lastWorkingDay = null;
+                let lastDayClockIn = null;
+                
+                for (const day of days) {
+                    const checkbox = document.getElementById(`${day}Check`);
+                    if (!checkbox.checked) continue;
+                    
+                    const clockInInput = document.getElementById(`${day}In`);
+                    const clockOutInput = document.getElementById(`${day}Out`);
+                    
+                    if (clockInInput.value) {
+                        lastWorkingDay = day;
+                        lastDayClockIn = clockInInput.value;
+                    }
+                    
+                    if (clockInInput.value && clockOutInput.value) {
+                        const clockInMinutes = timeToMinutes(clockInInput.value);
+                        const clockOutMinutes = timeToMinutes(clockOutInput.value);
+                        
+                        // Handle clock out on next day (if clock out time is earlier than clock in)
+                        let dayMinutes;
+                        if (clockOutMinutes < clockInMinutes) {
+                            dayMinutes = (24 * 60 - clockInMinutes) + clockOutMinutes;
+                        } else {
+                            dayMinutes = clockOutMinutes - clockInMinutes;
+                        }
+                        
+                        totalMinutesWorked += dayMinutes;
+                    }
+                }
+                
+                // Display different results based on mode
+                if (clockOutMode.checked) {
+                    // Calculate clock out time for target hours
+                    if (!lastDayClockIn) {
+                        resultDisplay.textContent = 'Enter at least one clock-in time';
+                        return;
+                    }
+                    
+                    const targetMinutes = targetHoursInput.value * 60;
+                    const remainingMinutes = targetMinutes - totalMinutesWorked;
+                    
+                    if (remainingMinutes <= 0) {
+                        resultDisplay.textContent = `Already worked ${minutesToHours(totalMinutesWorked)} hours`;
+                    } else {
+                        const lastClockInMinutes = timeToMinutes(lastDayClockIn);
+                        let clockOutMinutes = lastClockInMinutes + remainingMinutes;
+                        
+                        // Handle overnight shifts
+                        if (clockOutMinutes >= 24 * 60) {
+                            clockOutMinutes = clockOutMinutes - 24 * 60;
+                        }
+                        
+                        const clockOutTime = minutesToTime(clockOutMinutes);
+                        resultDisplay.textContent = `Clock out at: ${formatTime(clockOutTime)} to reach ${targetHoursInput.value} hours`;
+                    }
+                } else {
+                    // Display total hours worked
+                    resultDisplay.textContent = `Total: ${minutesToHours(totalMinutesWorked)} hours worked`;
+                }
+            }
+            
+            // Helper functions for time calculations
+            function timeToMinutes(timeString) {
+                const [hours, minutes] = timeString.split(':').map(Number);
+                return hours * 60 + minutes;
+            }
+            
+            function minutesToTime(totalMinutes) {
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
+                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            }
+            
+            function minutesToHours(minutes) {
+                return (minutes / 60).toFixed(2);
+            }
+            
+            function formatTime(timeString) {
+                const [hours, minutes] = timeString.split(':');
+                const hour = parseInt(hours);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const hour12 = hour % 12 || 12;
+                return `${hour12}:${minutes} ${ampm}`;
+            }
+        });
+    </script>
+</body>
+</html>
